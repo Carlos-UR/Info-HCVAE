@@ -41,7 +41,7 @@ This code is written in Python. Dependencies include
 * [transfomers](https://github.com/huggingface/transformers)
 
 ## Train Info-HCVAE
-Train Info-HCVAE with the following command. The checkpoint will be save at ./save/vae-checkpoint.
+Train Info-HCVAE with the following command:
 ```bash
 cd vae
 python main.py --model_dir ./model_folder --train_dir ./squad/train.json --dev_dir ./squad/dev.json
