@@ -64,6 +64,7 @@ class VAETrainer(object):
             q_ids, start_positions, end_positions = self.vae.generate(zq, za, c_ids)
         return q_ids, start_positions, end_positions, zq    
 
+    # [Update] Ahora guarda el estado actual del objeto (todas las variables del objeto).
     def save(self, filename, epoch):
         params = {
             'state_dict': self.vae.state_dict(),
@@ -78,9 +79,12 @@ class VAETrainer(object):
         }
         torch.save(params, filename)
     
+    # [New] Función que almacena la última época en la que se entrena el modelo (Checkpoint).
     def save_epoch(self, filename, epoch):
         torch.save({'epoch':epoch}, filename)
 
+    # [New] Función que carga un modelo así (Y todas las variables que forman el estado en el que se guardó).
+    #     - Carga la última época almacenada con save_epoch y la devuelve.
     def loadd(self, foldername):
         checkpoint = torch.load(f"{foldername}/best_f1_model.pt")
 
@@ -95,7 +99,6 @@ class VAETrainer(object):
 
         last_epoch = torch.load(f"{foldername}/last_epoch.pt")['epoch']
 
-        print(f"Loading model trained in {last_epoch} epochs. \
-        The best results was given in {checkpoint['epoch']}.")
+        print(f"Loading model trained in {last_epoch} epochs. The best results was given in {checkpoint['epoch']}.")
 
         return int(last_epoch)

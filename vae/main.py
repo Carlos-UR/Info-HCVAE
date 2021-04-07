@@ -77,7 +77,6 @@ def main(args):
       best_bleu, best_em, best_f1 = 0.0, 0.0, 0.0
 
     print("MODEL DIR: " + args.model_dir)
-    #mlflow.set_tracking_uri(f"{args.model_dir}/logs")
     mlflow_logger = init_mlflow(args, f"{args.model_dir}/mllogs")
     for epoch in trange(int(args.epochs), desc="Epoch", position=0):
       if epoch <= epochs:
@@ -96,13 +95,6 @@ def main(args):
           loss_log2.set_description_str(str2)
 
         if epoch >= 0:
-          # COMENTADO: Ahora forma parte de una función
-          '''metric_dict, bleu, _ = eval_vae(epoch, args, trainer, eval_data)
-          f1 = metric_dict["f1"]
-          em = metric_dict["exact_match"]
-          bleu = bleu * 100
-          _str = '{}-th Epochs BLEU : {:02.2f} EM : {:02.2f} F1 : {:02.2f}'
-          _str = _str.format(epoch, bleu, em, f1)'''
           f1, em, bleu, _str = eval_measures(epoch, args, trainer, eval_data)
           eval_log.set_description_str(_str)
           result = {
@@ -118,12 +110,10 @@ def main(args):
             best_f1 = f1
             trainer.save(os.path.join(args.model_dir, "best_f1_model.pt"), epoch)
             mlflow_logger.on_checkpoint(f"{args.model_dir}/f1_logs")
-            #create_logs(epoch, em, f1, bleu, "f1")
           if bleu > best_bleu:
             best_bleu = bleu
             trainer.save(os.path.join(args.model_dir, "best_bleu_model.pt"), epoch)
             mlflow_logger.on_checkpoint(f"{args.model_dir}/bleu_logs")
-            #create_logs(epoch, em, f1, bleu, "bleu")
           trainer.save_epoch(os.path.join(args.model_dir, "last_epoch.pt"), epoch)
 
           _str = 'BEST BLEU : {:02.2f} EM : {:02.2f} F1 : {:02.2f}'
@@ -135,6 +125,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", default=1004, type=int)
     parser.add_argument('--debug', dest='debug', action='store_true')
+
+    # [New] Nuevo argumento para señalar que queremos cargar un checkpoint.
     parser.add_argument('--load_checkpoint', dest='load_checkpoint', action='store_true')
     parser.add_argument('--train_dir', default='../data/squad/train-v1.1.json')
     parser.add_argument('--dev_dir', default='../data/squad/my_dev.json')
