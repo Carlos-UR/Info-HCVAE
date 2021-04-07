@@ -12,6 +12,7 @@ wget https://raw.githubusercontent.com/ccasimiro88/TranslateAlignRetrieve/c84784
 ```
 
 ## Deleting unanswered questions
+In the SQuAD folder you will find both versions (with and without unanswered questions). You will only need this code if you use another version of SQuAD v2.
 ```bash
 import json
 
