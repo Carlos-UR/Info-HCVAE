@@ -32,17 +32,6 @@ def init_mlflow(args, mlflow_tracking_uri):
 
     return MLFLowLogger(config)
 
-# Con la librería mlflow crea logs de cada métrica para cada época en la que mejoran
-# las medidas resultado (Cada vez que se guarda un nuevo modelo).
-
-def create_logs(epoch, em, f1, bleu, name):
-    mlflow.set_experiment(experiment_name="HCVAE")
-    with mlflow.start_run(run_name=name):
-        mlflow.log_param('epoch', epoch)
-        mlflow.log_metric('em', em)
-        mlflow.log_metric('f1', f1)
-        mlflow.log_metric('bleu', bleu)
-
 # Calcula los resultados del modelo, los imprime por pantalla y los devuelve.
 
 def eval_measures(epoch, args, trainer, eval_data):
@@ -69,9 +58,9 @@ def main(args):
 
 	  # Cargar checkpoint
     if args.load_checkpoint:
-      epochs = trainer.loadd(f"{args.model_dir}")
-      best_f1, best_em, best_bleu, _str = eval_measures(epochs, args, trainer, eval_data)
-      best_eval_log.set_description_str(_str)
+      epochs = trainer.loadd(args.model_dir)
+      best_f1, best_bleu, best_em = VAETrainer.load_measures(args.model_dir)
+      print(f"The current best measures are: F1  = {best_f1}, BLEU = {best_bleu} and EM = {best_em}.")
     else:
       epochs = -1
       best_bleu, best_em, best_f1 = 0.0, 0.0, 0.0
@@ -108,13 +97,11 @@ def main(args):
             best_em = em
           if f1 > best_f1:
             best_f1 = f1
-            trainer.save(os.path.join(args.model_dir, "best_f1_model.pt"), epoch)
-            mlflow_logger.on_checkpoint(f"{args.model_dir}/f1_logs")
+            trainer.save(os.path.join(args.model_dir, "best_f1_model.pt"), epoch, f1, bleu, em)
           if bleu > best_bleu:
             best_bleu = bleu
-            trainer.save(os.path.join(args.model_dir, "best_bleu_model.pt"), epoch)
-            mlflow_logger.on_checkpoint(f"{args.model_dir}/bleu_logs")
-          trainer.save_epoch(os.path.join(args.model_dir, "last_epoch.pt"), epoch)
+            trainer.save(os.path.join(args.model_dir, "best_bleu_model.pt"), epoch, f1, bleu, em)
+          trainer.save(os.path.join(args.model_dir, "checkpoint.pt"), epoch, f1, bleu, em)
 
           _str = 'BEST BLEU : {:02.2f} EM : {:02.2f} F1 : {:02.2f}'
           _str = _str.format(best_bleu, best_em, best_f1)
