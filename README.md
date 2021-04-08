@@ -2,7 +2,9 @@
 This is a **version** of the project "Generating Diverse and Consistent QA pairs from Contexts with
 Information-Maximizing Hierarchical Conditional VAEs":
 [[GitHub]](https://github.com/seanie12/Info-HCVAE) [[Paper]](https://www.aclweb.org/anthology/2020.acl-main.20/) [[Slide]](https://drive.google.com/file/d/17oakiVKIaQ1Y_hSCkGfUIp8P6ORSYjjz/view?usp=sharing) [[Video]](https://slideslive.com/38928851/generating-diverse-and-consistent-qa-pairs-from-contexts-with-informationmaximizing-hierarchical-conditional-vaes).
-this version removes unanswered questions from the data set. In addition, this project is prepared to train a model in multiple runs. That is, it can load checkpoints.
+
+
+This version removes unanswered questions from the data set. In addition, this project is prepared to train a model in multiple runs. That is, it can load checkpoints.
 
 
 ## Download Spanish SQuAD v2
