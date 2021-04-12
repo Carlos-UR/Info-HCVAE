@@ -27,7 +27,7 @@ class MLFLowLogger():
                 self._run_id, key, value, step=result["epoch"])
 
     def on_checkpoint(self, checkpoint_path):
-        os.makedirs(checkpoint_path, exist_ok=True)
+        #os.makedirs(checkpoint_path, exist_ok=True)
         try_mlflow_log(self.client.log_artifact, self._run_id, checkpoint_path)
 
     def close(self):

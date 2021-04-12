@@ -102,7 +102,7 @@ def main(args):
             best_bleu = bleu
             trainer.save(os.path.join(args.model_dir, "best_bleu_model.pt"), epoch, f1, bleu, em)
           trainer.save(os.path.join(args.model_dir, "checkpoint.pt"), epoch, f1, bleu, em)
-
+          mlflow_logger.on_checkpoint(f"{args.model_dir}/mllogs")
           _str = 'BEST BLEU : {:02.2f} EM : {:02.2f} F1 : {:02.2f}'
           _str = _str.format(best_bleu, best_em, best_f1)
           best_eval_log.set_description_str(_str)
