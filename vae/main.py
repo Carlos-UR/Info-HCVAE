@@ -11,6 +11,10 @@ from eval import eval_vae
 from trainer import VAETrainer
 from utils import batch_to_device, get_harv_data_loader, get_squad_data_loader
 
+# torch for TPU
+import torch_xla
+import torch_xla.core.xla_model as xm
+
 import uuid
 import mlflow
 #import mlflow_utils 
@@ -47,7 +51,7 @@ def main(args):
     eval_data = get_squad_data_loader(tokenizer, args.dev_dir,
                                       shuffle=False, args=args)
 
-    args.device = torch.cuda.current_device()
+    args.device = xm.xla_device()#torch.cuda.current_device()
 
     trainer = VAETrainer(args)
 	
