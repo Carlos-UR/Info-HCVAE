@@ -11,10 +11,6 @@ from eval import eval_vae
 from trainer import VAETrainer
 from utils import batch_to_device, get_harv_data_loader, get_squad_data_loader
 
-# torch for TPU
-import torch_xla
-import torch_xla.core.xla_model as xm
-
 import uuid
 import mlflow
 #import mlflow_utils 
@@ -51,7 +47,7 @@ def main(args):
     eval_data = get_squad_data_loader(tokenizer, args.dev_dir,
                                       shuffle=False, args=args)
 
-    args.device = xm.xla_device()#torch.cuda.current_device()
+    args.device = torch.cuda.current_device()
 
     trainer = VAETrainer(args)
 	
@@ -70,7 +66,7 @@ def main(args):
       best_bleu, best_em, best_f1 = 0.0, 0.0, 0.0
 
     print("MODEL DIR: " + args.model_dir)
-    mlflow_logger = init_mlflow(args, f"{args.model_dir}/mllogs")
+    mlflow_logger = init_mlflow(args, f"{args.model_dir}/mlruns")
     for epoch in trange(int(args.epochs), desc="Epoch", position=0):
       if epoch <= epochs:
         print(f"jumping epoch {epoch}...")
@@ -106,7 +102,7 @@ def main(args):
             best_bleu = bleu
             trainer.save(os.path.join(args.model_dir, "best_bleu_model.pt"), epoch, f1, bleu, em)
           trainer.save(os.path.join(args.model_dir, "checkpoint.pt"), epoch, f1, bleu, em)
-          mlflow_logger.on_checkpoint(f"{args.model_dir}/mllogs/checkpoint")
+          mlflow_logger.on_checkpoint(f"{args.model_dir}/mlruns/checkpoint")
           _str = 'BEST BLEU : {:02.2f} EM : {:02.2f} F1 : {:02.2f}'
           _str = _str.format(best_bleu, best_em, best_f1)
           best_eval_log.set_description_str(_str)
