@@ -18,7 +18,7 @@ class CustomDatset(Dataset):
         self.num_total = len(self.lines)
 
     def __getitem__(self, idx):
-        context = self.lines[idx].strip()
+        context = self.lines[idx].encode().decode('unicode-escape').strip()
         tokens = self.tokenizer.tokenize(context)[:self.max_length]
         ids = self.tokenizer.convert_tokens_to_ids(tokens)
         
