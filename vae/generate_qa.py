@@ -48,21 +48,21 @@ def main(args):
 
     device = torch.cuda.current_device()
     checkpoint = torch.load(args.checkpoint, map_location="cpu")
-    
-    if (args.vocabulary):
-        token_list = processing_vocabulary(args.vocabulary)
-        print(len(tokenizer))
-        tokenizer.add_tokens(token_list)
-        print(len(tokenizer))
-        checkpoint.resize_token_embeddings(len(tokenizer)) 
-        print(checkpoint.embeddings.word_embeddings.weight[-1, :])
-        checkpoint.embeddings.word_embeddings.weight[-1, :] = torch.zeros([checkpoint.config.hidden_size])
-        print(checkpoint.embeddings.word_embeddings.weight[-1, :])
 
     vae = DiscreteVAE(checkpoint["args"])
     vae.load_state_dict(checkpoint["state_dict"])
     vae.eval()
     vae = vae.to(device)
+
+    if (args.vocabulary):
+        token_list = processing_vocabulary(args.vocabulary)
+        print(len(tokenizer))
+        tokenizer.add_tokens(token_list)
+        print(len(tokenizer))
+        vae.resize_token_embeddings(len(tokenizer)) 
+        print(vae.embeddings.word_embeddings.weight[-1, :])
+        vae.embeddings.word_embeddings.weight[-1, :] = torch.zeros([vae.config.hidden_size])
+        print(vae.embeddings.word_embeddings.weight[-1, :])
     
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
