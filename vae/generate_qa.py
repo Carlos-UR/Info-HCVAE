@@ -32,6 +32,14 @@ class CustomDatset(Dataset):
     def __len__(self):
         return self.num_total
 
+def processing_vocabulary(token_string):
+    token_list=[]
+    vocabulary = token_string.split(',')
+    for token in vocabulary:
+        token_without_spaces = token.strip()
+        if(token_without_spaces):
+            token_list.append(token_without_spaces)
+    return token_list
 
 def main(args):
     tokenizer = BertTokenizer.from_pretrained(args.bert_model)
@@ -40,6 +48,17 @@ def main(args):
 
     device = torch.cuda.current_device()
     checkpoint = torch.load(args.checkpoint, map_location="cpu")
+    
+    if (args.vocabulary):
+        token_list = processing_vocabulary(args.vocabulary)
+        print(len(tokenizer))
+        tokenizer.add_tokens(token_list)
+        print(len(tokenizer))
+        checkpoint.resize_token_embeddings(len(tokenizer)) 
+        print(checkpoint.embeddings.word_embeddings.weight[-1, :])
+        checkpoint.embeddings.word_embeddings.weight[-1, :] = torch.zeros([checkpoint.config.hidden_size])
+        print(checkpoint.embeddings.word_embeddings.weight[-1, :])
+
     vae = DiscreteVAE(checkpoint["args"])
     vae.load_state_dict(checkpoint["state_dict"])
     vae.eval()
@@ -102,6 +121,6 @@ if __name__ == "__main__":
     parser.add_argument("--ratio", default=1.0, type=float)
     parser.add_argument("--k", default=1, type=int,
                         help="the number of QA pairs for each paragraph")
-
+    parser.add_argument("--vocabulary", type=str, help="tokenizer vocabulary to add")
     args = parser.parse_args()
     main(args)
