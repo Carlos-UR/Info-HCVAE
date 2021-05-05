@@ -59,10 +59,10 @@ def main(args):
         print(len(tokenizer))
         tokenizer.add_tokens(token_list)
         print(len(tokenizer))
-        vae.resize_token_embeddings(len(tokenizer)) 
-        print(vae.embeddings.word_embeddings.weight[-1, :])
-        vae.embeddings.word_embeddings.weight[-1, :] = torch.zeros([vae.config.hidden_size])
-        print(vae.embeddings.word_embeddings.weight[-1, :])
+        #vae.resize_token_embeddings(len(tokenizer)) 
+        #print(vae.embeddings.word_embeddings.weight[-1, :])
+        #vae.embeddings.word_embeddings.weight[-1, :] = torch.zeros([vae.config.hidden_size])
+        #print(vae.embeddings.word_embeddings.weight[-1, :])
     
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
