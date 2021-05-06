@@ -15,7 +15,8 @@ def main(args):
   exceptions = ['instrucciones_aplicacion', 'condiciones_aplicacion']
 
   producto = ''
-
+  if (args.limit):
+    input_data = input_data[0:args.limit]
   # Entradas del JSON
   for entry in input_data:
     # Claves de cada entrada
@@ -40,8 +41,9 @@ def main(args):
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
-  parser.add_argument("--input_file", required=True, type=str)
-  parser.add_argument("--output_file", type=str, default='./out.txt')
+  parser.add_argument("--input_file", required=True, type=str, help="File where load the input")
+  parser.add_argument("--output_file", type=str, default='./out.txt', help="File name where store the output" )
+  parser.add_argument('--limit', type=int, help="Number of product to read.")
 
   args = parser.parse_args()
 
